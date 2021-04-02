@@ -6,6 +6,7 @@
 #include <chrono>
 #include <tuple>
 
+
 ///////////////////// Шаблонный класс /////////////////
 
 template<typename T>
@@ -217,7 +218,7 @@ public:
   }
 };
 
-int main(void)
+int main_lw6(void)
 {
   int i = -32;
   float j = 2.02f;
@@ -247,7 +248,7 @@ int main(void)
 
 //////////////////////////////////////////////////////
 
-int main_lw6(void)
+int main_lw6_v2(void)
 {
 
   ::ExampleLW6 temp(10u);

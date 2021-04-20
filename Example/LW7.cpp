@@ -1,38 +1,67 @@
 #include <iostream>
+#include <vector>
+#include <string>
+#include <tuple>
 
-void foo1(int** ptr, size_t new_size)
+/// C++14
+class Cpp14
 {
-  delete[] *ptr;
-  *ptr = new int[new_size];
+private:
+  int         _int;
+  float       _float;
+  std::string _string;
+  std::vector<char> _vectorChars;
 
-  for (size_t i = 0; i < new_size; i++)
+public:
+  explicit Cpp14(int vInt, float vFloat, std::string vString, std::vector<char> vVectorChars) noexcept
+    : _int(vInt), _float(vFloat), _string(vString), _vectorChars(vVectorChars)
+  { }
+
+public:
+  std::tuple<int, float&, std::string, std::vector<char>> GetFields()
   {
-    (*ptr)[i] = int(i + i);
+    return std::tuple<int, float&, std::string, std::vector<char>>
+    {_int, _float, _string, _vectorChars};
   }
-}
 
-
-void print(int* ptr, size_t size)
-{
-  for (size_t i = 0; i < size; i++)
+  void Print()
   {
-    std::cout << ptr[i] << " ";
+    std::cout << _int << std::endl << _float << std::endl
+      << _string << std::endl << _vectorChars.data() << std::endl;
   }
-  std::cout << std::endl;
-}
+};
 
-int main_(void)
+
+int main(void)
 {
-  int* ptr = new int[5]{ 1,2,3,4,5 };
-  print(ptr, 5);
+  {
+    Cpp14 cpp14{ 14, 3.333f, "C++14", {1, 2, 3, '\0'} };
 
-  foo1(&ptr, 3);
-  print(ptr, 3);
+    int i;
+    float j;
+    std::string k;
+    std::vector<char> l;
 
-  foo1(&ptr, 8);
-  print(ptr, 8);
+    std::tie(i, j, k, l) = cpp14.GetFields();
+    std::cout << i << std::endl << j << std::endl
+      << k << std::endl << l.data() << std::endl;
 
-  delete[] ptr;
+    std::get<1>(cpp14.GetFields()) = -2.09999f;
+    cpp14.Print();
+
+    j = -214524.3f;
+    cpp14.Print();
+  }
+
+  {
+    Cpp14 cpp17{ 17, 2.2222f, "C++17", {4, 3, 2, 1, '\0'} };
+    const auto &[i, j, k, l] = cpp17.GetFields();
+    std::cout << i << std::endl << j << std::endl
+      << k << std::endl << l.data() << std::endl;
+
+    j = -24526437.0f;
+    cpp17.Print();
+  }
 
   return 0;
 }

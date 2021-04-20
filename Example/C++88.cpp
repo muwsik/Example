@@ -18,9 +18,7 @@ void exp_with_int_matrix(void)
   for (size_t i = 0; i < matrix.Size(); i++)
   {
     for (size_t j = 0; j < matrix[i].Size(); j++)
-    {
       std::cout << std::setw(3) << matrix.operator[](i).operator[](j) << " ";
-    }
     std::cout << std::endl;
   }
   std::cout << std::endl;
@@ -42,7 +40,7 @@ void exp_with_real(void)
   std::cout << std::endl;
 }
 
-int main(void)
+int main_cpp88(void)
 {
   IntArray my_lovely_integer_array(10);
 

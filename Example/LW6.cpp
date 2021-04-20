@@ -46,7 +46,6 @@ std::ostream& operator<<(std::ostream& stream, const ExampleLW6<U>& obj)
 template<typename T>
 class ExampleLW6<T*>
 {
-
 public:
   ExampleLW6(T* value, size_t size) : _size(size)
   {

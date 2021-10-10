@@ -13,7 +13,7 @@ public:
   ~foo() { std::cout << "foo::~foo( ) | " << this << std::endl; }
 };
 
-foo bar() { 
+foo bar() {
   foo local_foo;
   return local_foo;
 }
@@ -33,3 +33,34 @@ int main_lw1()
 
   return 0;
 }
+
+// #define CONST 2.01
+ constexpr auto CONST = 2.01;
+
+int main_(void)
+{
+  double f;
+  while (true)
+  {
+    std::cin >> f ;
+
+    if ((CONST - f) == 0.0)
+      std::cout << "is 2.01";
+    else
+      std::cout << "other";
+
+    std::cout << std::endl << std::endl;
+  }
+
+  return EXIT_SUCCESS;
+}
+
+
+
+
+
+
+
+
+
+// 2.0099999999999998

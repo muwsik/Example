@@ -23,6 +23,7 @@
     <ClCompile Include="C++88.cpp" />
     <ClCompile Include="LW1.cpp" />
     <ClCompile Include="LW2.cpp" />
+    <ClCompile Include="LW4.cpp" />
     <ClCompile Include="LW6.cpp" />
     <ClCompile Include="LW5.cpp" />
     <ClCompile Include="LW7.cpp" />

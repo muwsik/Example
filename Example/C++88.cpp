@@ -13,7 +13,7 @@ void exp_with_int_matrix(void)
 
   for (size_t i = 0; i < matrix.Size(); i++)
     for (size_t j = 0; j < matrix[i].Size(); j++)
-      matrix[i][j] = rand() % (100) - i * j;
+      matrix[i][j] = rand() % (100) - static_cast<int>(i * j);
 
   for (size_t i = 0; i < matrix.Size(); i++)
   {

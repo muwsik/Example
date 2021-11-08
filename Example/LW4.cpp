@@ -1,6 +1,4 @@
 #include <iostream>
-#include <vector>
-
 
 class Base
 {
@@ -33,7 +31,8 @@ public:
 public:
   Product() : _private_member{}, _public_member{}
   {
-    dynamic_cast<Base*>(this)->_public_member; /* Потенциальное разъименование нулевого указателя */
+    dynamic_cast<Base*>(this)->_public_member; /* Потенциальное разыменование нулевого указателя */
+    /* Помните, каждый раз, когда используется dynamic_cast в мире умирает один котёнок (с) */
     Base::_public_member;
   }
 

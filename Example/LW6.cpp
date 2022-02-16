@@ -6,6 +6,10 @@
 #include <chrono>
 #include <tuple>
 
+/*
+#define TIME_CAST(time_to_cast) \
+  std::chrono::duration_cast<std::chrono::microseconds>(time_to_cast) 
+*/
 
 ///////////////////// Шаблонный класс /////////////////
 
@@ -49,8 +53,9 @@ class ExampleLW6<T*>
 public:
   ExampleLW6(T* value, size_t size) : _size(size)
   {
-    _field = new T[_size];
-    memcpy((void*)_field, value, _size * sizeof(T));
+    throw std::exception();
+    //_field = new T[_size];
+    //memcpy((void*)_field, value, _size * sizeof(T));
   }
 
 public:
@@ -124,8 +129,8 @@ auto conv_v2()
   return 0;
 }
 
-template<typename First, typename ... Types>
-auto conv_v2(const First& first, const Types& ... args)
+template<typename FirstType, typename ... OtherTypes>
+auto conv_v2(const FirstType& first, const OtherTypes& ... args)
 {
   return first + conv_v2(args...);
 }
@@ -139,14 +144,14 @@ constexpr auto conv_v3(const Types& ... args)
 //////////////////////////////////////////////////////
 
 
-template <class F, class ...Args>
-auto Timer(F&& f, Args&& ...args)
+template <class FunctionType, class ...ArgsTypes>
+auto Timer(FunctionType&& f, ArgsTypes&& ...args)
 {
-  //if constexpr (std::is_same_v<std::invoke_result_t<F, Args...>, void>)
+  //if constexpr (std::is_same_v<std::invoke_result_t<FunctionType, ArgsTypes...>, void>)
   if constexpr (std::is_void_v<decltype(f(args...))>)
   {
     auto start = std::chrono::high_resolution_clock::now();
-    f(std::forward<Args>(args)...);
+    f(std::forward<ArgsTypes>(args)...);
     auto end = std::chrono::high_resolution_clock::now();
 
     return end - start;
@@ -154,50 +159,61 @@ auto Timer(F&& f, Args&& ...args)
   else
   {
     auto start = std::chrono::high_resolution_clock::now();
-    auto temp = f(std::forward<Args>(args)...);
+    //auto temp = f(std::forward<ArgsTypes>(args)...);
+    auto temp = f(std::forward<ArgsTypes>(args)...);
     auto end = std::chrono::high_resolution_clock::now();
 
-    return std::make_pair(temp, end - start);
+    return std::pair(temp, end - start);
   }
 }
 
-template <class O, class F, class ...Args>
-auto Timer(O& o, F&& f, Args&& ...args)
+template <class ObjectType, class FunctionType, class ...ArgsTypes>
+auto Timer(ObjectType& o, FunctionType&& f, ArgsTypes&& ...args)
 {
   if constexpr (std::is_void_v<decltype((o.*f)(args...))>)
   {
     auto start = std::chrono::high_resolution_clock::now();
-    (o.*f)(std::forward<Args>(args)...);
+    (o.*f)(std::forward<ArgsTypes>(args)...);
     auto end = std::chrono::high_resolution_clock::now();
     return end - start;
   }
   else
   {
     auto start = std::chrono::high_resolution_clock::now();
-    auto temp = (o.*f)(std::forward<Args>(args)...);
+    auto temp = (o.*f)(std::forward<ArgsTypes>(args)...);
     auto end = std::chrono::high_resolution_clock::now();
-    return std::make_pair(temp, end - start);
+    return std::pair(temp, end - start);
   }
 }
 
 
 int bar(int& i, float j)
 {
-  std::cout << i << " " << j << std::endl;
+  //std::cout << i << " " << j << std::endl;
+  std::cout << "int bar(int& i, float j)" << std::endl;
   return i = 5;
+}
+
+int foo(int j)
+{
+  std::cout << "int foo(int j)" << std::endl;
+  return j = -5;
 }
 
 void foo(float j)
 {
-  std::cout << j << std::endl;
+  std::cout << "void foo(float j)" << std::endl;
+  //std::cout << j << std::endl;
 }
 
 class L
 {
-  std::string temp{ "0x" };
+  std::string temp{ "0_" };
 
 public:
   L() = default;
+public:
+  ~L() = default;
 
 public:
   L(const std::string_view& str) :temp(str)
@@ -206,6 +222,7 @@ public:
 public:
   bool foo(const std::string_view& str)
   {
+    std::cout << "bool L::foo(const std::string_view& str)" << std::endl;
     std::cout << temp << str << std::endl;
     return true;
   }
@@ -213,7 +230,8 @@ public:
 public:
   void foo(void)
   {
-    std::cout << temp << std::endl;
+    std::cout << "void L::foo(void)" << std::endl;
+    //std::cout << temp << std::endl;
   }
 };
 
@@ -225,22 +243,26 @@ int main_lw6(void)
 
   auto rez1 = Timer(&bar, i, j);
   std::cout << rez1.first << std::endl;
-  std::cout << rez1.second.count() / 1'000'000'000.0 << std::endl;
+  std::cout << std::chrono::duration_cast<std::chrono::microseconds>(rez1.second) << std::endl;
   std::cout << "-----------------" << std::endl;
 
-  auto rez2 = Timer(&foo, j);
-  std::cout << rez2.count() / 1'000'000'000.0 << std::endl;
+  auto rez5 = Timer<int(*)(int), int&>(&foo, i);
+  std::cout << std::chrono::duration_cast<std::chrono::microseconds>(rez5.second) << std::endl;
+  std::cout << "-----------------" << std::endl;
+
+  auto rez2 = Timer<void(*)(float), float&>(&foo, j);
+  std::cout << std::chrono::duration_cast<std::chrono::microseconds>(rez2) << std::endl;
   std::cout << "-----------------" << std::endl;
 
   bool (L::* foo1)(const std::string_view &) = &L::foo;
-  auto res3 = Timer(l, foo1, std::string("123"));
+  auto res3 = Timer(l, foo1, "123");
   std::cout << res3.first << std::endl;
-  std::cout << res3.second.count() / 1'000'000'000.0 << std::endl;
+  std::cout << std::chrono::duration_cast<std::chrono::microseconds>(res3.second)<< std::endl;
   std::cout << "-----------------" << std::endl;
   
   void (L::* foo2)(void) = &L::foo;
   auto res4 = Timer(l, foo2);
-  std::cout << res4.count() / 1'000'000'000.0 << std::endl;
+  std::cout << std::chrono::duration_cast<std::chrono::microseconds>(res4) << std::endl;
 
   return 0;
 }

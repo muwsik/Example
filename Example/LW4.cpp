@@ -45,7 +45,7 @@ public:
   ~Product() = default;
 };
 
-int main(void)
+int main_lw4(void)
 {
   Base objectA(1, 5.0);
   Product objectB(nullptr, '4');

@@ -48,7 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LW6.h">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="LW1.h">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

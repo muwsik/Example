@@ -112,6 +112,7 @@ int main_lw5(void)
 
 template <typename T>
 void foo(T temp, typename std::enable_if<std::is_same<T, uint64_t>::value>::type* = 0)
+//void foo(T temp, typename std::enable_if_t<std::is_same_v<T, uint64_t>>* = nullptr)
 {
   // typeof(temp) == uint64_t
 }
